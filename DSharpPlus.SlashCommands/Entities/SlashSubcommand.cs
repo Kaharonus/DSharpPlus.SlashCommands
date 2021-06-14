@@ -12,9 +12,9 @@ namespace DSharpPlus.SlashCommands.Entities
         public string Name { get; init; }
         public string Description { get; init; }
         public MethodInfo ExecutionMethod { get; init; }
-        public BaseSlashCommandModule BaseCommand { get; init; }
+        public object BaseCommand { get; init; }
 
-        public SlashSubcommand(string name, string desc, MethodInfo method, BaseSlashCommandModule commandInstance)
+        public SlashSubcommand(string name, string desc, MethodInfo method, object commandInstance)
         {
             Name = name;
             Description = desc;
@@ -27,6 +27,11 @@ namespace DSharpPlus.SlashCommands.Entities
             try
             {
                 var parsedArgs = await ParseArguments(c, guildId, args);
+                if (!ExecutionMethod.IsPrivate && !ExecutionMethod.IsPublic) {
+                    var a = (Action<InteractionContext>) BaseCommand;
+                    a((InteractionContext)parsedArgs[0]);
+                    return;
+                }
                 ExecutionMethod.Invoke(BaseCommand, parsedArgs);
             }
             catch (Exception ex)

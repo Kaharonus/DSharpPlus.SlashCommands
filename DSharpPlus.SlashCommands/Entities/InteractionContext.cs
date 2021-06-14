@@ -59,8 +59,10 @@ namespace DSharpPlus.SlashCommands.Entities
         {
             var msg = await _client.FollowupWithAsync(response, Interaction.Token);
 
-            if (msg is null)
+            if (msg is null) {
                 throw new Exception("Failed to reterive message object from Discord.");
+            
+            }
 
             return msg;
         }
